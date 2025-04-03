@@ -5,7 +5,7 @@ Run it with the command:
 
     $ ./file_renamer.sh <dirPath> <filename> <start?=1>
 
-[!WARNING]
-Renaming cannot be undone.
+> [!WARNING]
+> Renaming cannot be undone.
 
 ### Reflections

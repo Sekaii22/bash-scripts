@@ -15,7 +15,11 @@ renameFiles() {
     for item in ${fileArr[@]}
     do
         # extract file extension
-        local extension=".${item##*.}";           # remove longest matching *. from start
+        if [[ $item =~ \..* ]]; then
+            local extension=".${item##*.}";           # remove longest matching *. from start
+        else
+            local extension="";
+        fi
 
         # rename file
         mv "${currentPath}${item}" "${currentPath}${fileName}_${fileNameCount}${extension}";

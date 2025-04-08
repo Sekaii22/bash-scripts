@@ -3,9 +3,9 @@ The program archives files and directories listed in a given text file, compress
 
 Run it with the command:
 
-    $ ./auto-backup.sh <filePaths>
+    $ ./auto-backup.sh <filePaths> <backupLocation?=$HOME> <maxKeep?=5>
 
-Write your paths in absolute path into a text file and provide it as the argument.
+Write your paths in absolute into a text file and provide it as the `<filePaths>` argument. `backupLocation` (optional) is where the auto-backups folder will be created, default is home directory. `maxKeep` (optional) is the number of backups to keep, default is 5.
 
 ### Reflections
 This is my second attempt at writing a bash script and I still feel quite unfamiliar with it. Many of the commands have so many options that sometimes I feel completely overwhelmed with them. The unintuitive name of some of the commands also doesn't help with remembering it. This took embarrassingly long for me to write despite being a very simple script.

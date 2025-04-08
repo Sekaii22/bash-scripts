@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# HOW TO USE: .file_renamer.sh dirPath fileName <start>
+# HOW TO USE: .batch_file_renamer.sh dirPath fileName <start>
 
 # arg: directory path
 renameFiles() {

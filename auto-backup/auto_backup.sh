@@ -1,14 +1,10 @@
 #!/usr/bin/env bash
 
-# get all absolute paths that needs to be backed up
-# cpy files into a backup location
-# compress individually
-# tar -czvf archive_$(date +%d%m%y).tar.gz folder_to_rename/
-# keep 5 archive, delete old ones
-# cron jobs for automating backup
+# HOW TO USE: .auto_backup.sh backupPaths.txt
 
 paths=$(awk '{ print $0 }' < $1);
 archive="backup_$(date +%d%m%y_%H%M%S)";
+maxKeep=5
 
 # create dir if not exists
 mkdir -p $HOME/auto-backups;
@@ -29,7 +25,7 @@ rm -rf ${archive};
 
 touch .created
 # check if no of archive created is >= 5
-if [ $(wc -l .created | awk '{print $1}') -ge 5 ]; then
+if [ $(wc -l .created | awk '{print $1}') -ge ${maxKeep} ]; then
     delPath=$(awk 'NR==1 { print $2 }' .created);         # get the oldest archive
     sed -i '1d' .created;                                 # remove line 1
     echo "removing ${delPath}.tar.gz ..."

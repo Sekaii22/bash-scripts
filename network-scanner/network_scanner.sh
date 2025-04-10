@@ -41,7 +41,7 @@ do
         ipAddr=$(echo "${para}" | grep "scan report" | cut -d " " -f 5-);
         macAddr=$(echo "${para}" | grep MAC | cut -d " " -f 3);
         # check if mac is empty
-        ${macAddr:=UNKNOWN}
+        macAddr=${macAddr:-UNKNOWN}
         openPorts=($(echo "${para}" | grep open | cut -d " " -f 1 | cut -d / -f 1));
 
         echo $ipAddr;

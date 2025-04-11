@@ -4,7 +4,7 @@
 # HOW TO USE: .network_scanner.sh <subnet?=hostSubnet>
 
 hostname=$(hostname -I);
-if [ -z ${hostname:+x} ]; then
+if [ -z "${hostname}" ]; then
     echo "Error: cannot find host name";
     echo "exiting...";
     exit 1;
@@ -29,13 +29,19 @@ echo "Subnet (CIDR): ${mySubnet}";
 echo;
 
 # if subnet argument not given, use host's subnet
-subnet=${1:-${mySubnet}}
+subnet=${1:-${mySubnet}};
+newfile="output.nmap";
+oldfile="output.old.nmap";
 
 echo "Network scan initiated on ${subnet}:"
-#sudo nmap -sS -T4 -oN output.nmap ${subnet};
+# check if there is an existing output.nmap
+# if [ -f ${newfile} ]; then
+#     mv ${newfile} ${oldfile};
+# fi
+#sudo nmap -sS -T4 -oN ${newfile} ${subnet};
 
 # -v RS= sets the RS variable before program execution
-noOfReports=$(awk -v RS= '{print $1}' output.nmap | wc -l);
+noOfReports=$(awk -v RS= '{print $1}' ${newfile} | wc -l);
 
 table="|IP Address:\tMAC Address:\tPorts:\t\n";
 for ((i=1; i<=${noOfReports}; i++))
@@ -44,29 +50,34 @@ do
     if [ ! ${i} -eq ${noOfReports} ]; then
         # report is the scan report for one ip address
         # gets report number i
-        report=$(awk -v RS= -v reportNo=${i} 'NR==reportNo {print $0}' output.nmap);
+        report=$(awk -v RS= -v reportNo=${i} 'NR==reportNo {print $0}' ${newfile});
 
         ipAddr=$(echo "${report}" | grep "scan report" | cut -d " " -f 5-);
 
         macAddr=$(echo "${report}" | grep "MAC" | cut -d " " -f 3);
         # check if mac is empty
-        macAddr=${macAddr:-UNKNOWN};
+        if [ -z "${macAddr}" ]; then
+            macAddr="UNKNOWN";
+        else
+            # check if it is a new device by searching MAC against old reports
+            if [ -z "$(grep $macAddr output.old.nmap)" ]; then
+                macAddr="${macAddr} (NEW)";
+            fi
+        fi
 
         # openPorts is an array or opened ports
         openPorts=($(echo "${report}" | grep "open" | cut -d " " -f 1 | cut -d / -f 1));
         alt="";
         # check if openPorts is empty
-        if [ -z ${openPorts:+x} ]; then
+        if [ -z "${openPorts}" ]; then
             # openPorts is empty, all closed and/or filtered
-            if [[ ${report} =~ closed ]]; then
+            if [[ ${report} =~ closed ]] && [[ ${report} =~ filtered ]]; then
+                alt="Closed and filtered";
+                 
+            elif [[ ${report} =~ closed ]]; then
+                alt="All closed";
 
-                if [[ ${report} =~ filtered ]]; then
-                    alt="All closed or filtered";
-                else
-                    alt="All closed";
-                fi
-
-            else
+            elif [[ ${report} =~ filtered ]]; then
                 alt="All filtered";
             fi
         else
@@ -77,7 +88,7 @@ do
 
         table="${table}|${ipAddr}\t${macAddr}\t${openPorts:-${alt}}\t\n";
     else
-        noOfIPsAndHostsUp=$(awk -v RS= 'NR==10 {print $0}' output.nmap | cut -d " " -f 11-16);
+        noOfIPsAndHostsUp=$(awk -v RS= 'NR==10 {print $0}' ${newfile} | cut -d " " -f 11-16);
         echo $noOfIPsAndHostsUp;
         echo;
     fi

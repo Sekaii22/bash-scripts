@@ -35,10 +35,17 @@ oldfile="output.old.nmap";
 
 echo "Network scan initiated on ${subnet}:"
 # check if there is an existing output.nmap
-# if [ -f ${newfile} ]; then
-#     mv ${newfile} ${oldfile};
-# fi
-#sudo nmap -sS -T4 -oN ${newfile} ${subnet};
+if [ -f ${newfile} ]; then
+    mv -f ${newfile} ${oldfile};
+fi
+
+# scan
+sudo nmap -sS --min-rate 2000 -T4 -oN ${newfile} ${subnet} > /dev/null;
+
+# check if nmap scan is successful
+if [ $? -ge 1 ]; then
+    exit 1;
+fi
 
 # -v RS= sets the RS variable before program execution
 noOfReports=$(awk -v RS= '{print $1}' ${newfile} | wc -l);
@@ -60,7 +67,7 @@ do
             macAddr="UNKNOWN";
         else
             # check if it is a new device by searching MAC against old reports
-            if [ -z "$(grep $macAddr output.old.nmap)" ]; then
+            if [ -f ${oldfile} ] && [ -z "$(grep ${macAddr} ${oldfile})" ]; then
                 macAddr="${macAddr} (NEW)";
             fi
         fi
@@ -88,7 +95,7 @@ do
 
         table="${table}|${ipAddr}\t${macAddr}\t${openPorts:-${alt}}\t\n";
     else
-        noOfIPsAndHostsUp=$(awk -v RS= 'NR==10 {print $0}' ${newfile} | cut -d " " -f 11-16);
+        noOfIPsAndHostsUp=$(awk -v RS= -v lastLine=${i} 'NR==lastLine {print $0}' ${newfile} | cut -d " " -f 11-16);
         echo $noOfIPsAndHostsUp;
         echo;
     fi
@@ -106,4 +113,5 @@ done
     echo -e "$horizontalLine";
     echo -e $table | column -t -s $'\t' -o " | ";
     echo -e "$horizontalLine";
+    echo;
 

@@ -14,7 +14,7 @@ Run it with the command:
 `<subnet>` (optional) defaults to the user's subnet if not explicitly stated. 
 
 <br>
-<img loading="lazy" width="600px" src="./images/main.png" alt="scan table" />
+<img loading="lazy" width="600px" src="./images/main2.png" alt="scan table" />
 
 ### Reflections
 My third bash script. This time, although still taking quite a bit time to finish, I felt a lot more comfortable working with bash. Many of the commands are starting to become more familiar to me the more I use them and oftentimes, I know which commands need to be used to achieve the results I want. Of course, not all is smooth sailing, I also did faced some challenges in this project trying to parse out and format certain data. But, nothing a little bit of Google can't solve.

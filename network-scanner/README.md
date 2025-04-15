@@ -1,5 +1,5 @@
 # network-scanner
-The program uses Nmap to scan a subnet for any online hosts and then performs port scan on them. Results are then parsed and organized into a clean, user-friendly table format for easier consumption. Current scan results will be compared with the previous to detect any new devices in the network. The script will also get the user's network information like their local IP, subnet mask and the CIDR notation.
+The program uses Nmap to scan a subnet for any online hosts and then performs port scan on them. Results are then parsed and organized into a clean, user-friendly table format for easier consumption. Current scan results will be compared with the previous to detect any new devices in the network. The script will also get the user's network information like their local IP address, subnet mask and the CIDR notation. Options for further scanning are also available.
 
 This script is solely for getting a quick overview of a network. 
 
